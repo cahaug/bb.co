@@ -1,0 +1,30 @@
+{
+  "name": "bb.co",
+  "version": "1.0.0",
+  "description": "Public, Anonyous, White Collar Crime, Murder &amp; Corruption Tracker &amp; Search for Five Eyes Countries",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cahaug/bb.co.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cahaug/bb.co/issues"
+  },
+  "homepage": "https://github.com/cahaug/bb.co#readme",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "helmet": "^4.4.1",
+    "hpp": "^0.2.3",
+    "knex": "^0.95.4",
+    "nodemon": "^2.0.7",
+    "pg": "^8.5.1"
+  }
+}
