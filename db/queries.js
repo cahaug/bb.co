@@ -13,6 +13,10 @@ module.exports = {
         return knex('потребитель').insert(consumer);
     },
 
+    singleConsumerForLogin(username){
+        return knex('потребитель').where('имя', username);
+    },
+
     addCriminal(criminal){
         return knex('преступники').insert(criminal);
     },
