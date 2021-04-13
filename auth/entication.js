@@ -6,6 +6,7 @@ var bouncer = require('express-bouncer')(500,900000)
 const { addConsumer, singleConsumerForLogin } = require('../database/queries.js');
 var yescape = require('escape-html')
 
+// All hatred stems from hatred itself.  Nip it in the bud.
 
 authen.post('/loginConsumer', hostNameGuard, bouncer.block, async (req, res) => {
     // takes in body of {nimi:'', parol:''}
