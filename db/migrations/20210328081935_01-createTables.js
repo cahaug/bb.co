@@ -180,10 +180,16 @@ exports.up = function(knex, Promise) {
         record.bigInteger('depravityScore').defaultTo(0);
         record.string('contentText', 10000).defaultTo(null);
     })
-    // evidence -> comments
-
 };
 
 exports.down = function(knex, Promise) {
-  
+    return knex.schema
+        .dropTableIfExists('суждения3')
+        .dropTableIfExists('суждения2')
+        .dropTableIfExists('суждения1')
+        .dropTableIfExists('данные')
+        .dropTableIfExists('события')
+        .dropTableIfExists('преступники')
+        .dropTableIfExists('потребитель')
+        .dropTableIfExists('пользователь');
 };
