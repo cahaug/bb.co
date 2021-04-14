@@ -3,7 +3,7 @@ var yescape = require('escape-html')
 var bouncer = require('express-bouncer')(500,900000)
 const restricted = require('../middleware/restricted.js')
 const hostNameGuard = require('../middleware/hostNameGuard.js')
-const { addCriminal, addCrimeEvent, addDataEntry, addCommentOnCriminal, addCommentOnCrimeEvent, addCommentOnDataEntry } = require('../db/queries.js')
+const { addCriminal, addCrimeEvent, addDataEntry, addCommentOnCriminal, addCommentOnCrimeEvent, addCommentOnDataEntry, criminalSearchLegalName, criminalSearchLastFirst, criminalSearchLastMiddleFirst, commentaryForCriminal, commentaryForCrimeEvent, commentaryForDataEntry, crimesForCriminal, dataForCrimeId } = require('../db/queries.js')
 
 
 // blackballing crims is truly thankless work,
@@ -205,5 +205,111 @@ consu.post('/addCommentCrimeEvent', hostNameGuard, restricted, bouncer.block, as
     }
 })
 
+
+consu.post('/searchCrimsLegalName', hostNameGuard, bouncer.block, async (req, res) => {
+    try {
+        let legalName = yescape(req.body.legalName)
+        const searchedForCrimLegalName = await criminalSearchLegalName(legalName)
+        bouncer.reset(req)
+        res.status(200).json({message:'queried LegalName', searchedForCrimLegalName: searchedForCrimLegalName})
+    } catch (err) {
+        console.log('SearchCrims LegalName Error', err)
+        res.status(400).json({message:'Error Querying LegalName', err:err})
+    }
+})
+
+
+consu.post('/searchCrimsLastFirst', hostNameGuard, bouncer.block, async (req, res) => {
+    try {
+        let firstName = yescape(req.body.firstName)
+        let lastName = yescape(req.body.lastName)
+        const searchedForCrimLastFirst = await criminalSearchLastFirst(firstName, lastName)
+        bouncer.reset(req)
+        res.status(200).json({message:'queried lastFirst', searchedForCrimLastFirst: searchedForCrimLastFirst})
+    } catch (err) {
+        console.log('SearchCrims LastFirst Error', err)
+        res.status(400).json({message:'Error Querying LastFirst', err:err})
+    }
+})
+
+
+consu.post('/searchCrimsWithMid', hostNameGuard, bouncer.block, async (req, res) => {
+    try {
+        let firstName = yescape(req.body.firstName)
+        let middleName = yescape(req.body.middleName)
+        let lastName = yescape(req.body.lastName)
+        const searchedForCrimWithMid = await criminalSearchLastMiddleFirst(firstName, middleName, lastName)
+        bouncer.reset(req)
+        res.status(200).json({message:'queried WthMid', searchedForCrimWithMid: searchedForCrimWithMid})
+    } catch (err) {
+        console.log('SearchCrims LastFirst Error', err)
+        res.status(400).json({message:'Error Querying WithMid', err:err})
+    }
+})
+
+
+consu.post('/commentaryForCriminal', hostNameGuard, bouncer.block, async (req, res) => {
+    try {
+        let criminalId = parseInt(yescape(req.body.criminalId), 10)
+        const commentaryForCrim = await commentaryForCriminal(criminalId)
+        bouncer.reset(req)
+        res.status(200).json({message:'Commentary Criminal', commentaryForCrim:commentaryForCrim})
+    } catch (err) {
+        console.log('Commentary Criminal Error', err)
+        res.status(400).json({message:'Error Get Commentary Criminal', err:err})
+    }
+})
+
+
+consu.post('/commentaryForCrimeEvent', hostNameGuard, bouncer.block, async (req, res) => {
+    try {
+        let crimeEventId = parseInt(yescape(req.body.crimeEventId), 10)
+        const commentaryForCrimeEv = await commentaryForCrimeEvent(crimeEventId)
+        bouncer.reset(req)
+        res.status(200).json({message:'Commentary CrimeEvent', commentaryForCrimeEv:commentaryForCrimeEv})
+    } catch (err) {
+        console.log('Commentary CrimeEvent Error', err)
+        res.status(400).json({message:'Error Get Commentary CrimeEvent', err:err})
+    }
+})
+
+
+consu.post('/commentaryForEvidence', hostNameGuard, bouncer.block, async (req, res) => {
+    try {
+        let dataEntryId = parseInt(yescape(req.body.evidenceId), 10)
+        const commentaryForEvi = await commentaryForDataEntry(dataEntryId)
+        bouncer.reset(req)
+        res.status(200).json({message:'Commentary Evidence', commentaryForEvi:commentaryForEvi})
+    } catch (err) {
+        console.log('Commentary Evidence Error', err)
+        res.status(400).json({message:'Commentary Evidence Error', err:err})
+    }
+})
+
+
+consu.post('/crimesForCrim', hostNameGuard, bouncer.block, async (req, res) => {
+    try {
+        let criminalId = parseInt(yescape(req.body.criminalId), 10)
+        const crimesForCrim = crimesForCriminal(criminalId)
+        bouncer.reset(req)
+        res.status(200).json({message:'Queried Crimes4Criminal', crimesForCrim:crimesForCrim})
+    } catch (err) {
+        console.log('Query Crimes4Crim Error', err)
+        res.status(400).json({message:'Query Crimes4Crim Error', err:err})
+    }
+})
+
+
+consu.post('/evidenceForCrimeEvent', hostNameGuard, bouncer.block, async (req, res) => {
+    try {
+        let crimeEventId = parseInt(yescape(req.body.crimeEventId), 10)
+        const evidenceForCrimeEvent = await dataForCrimeId(crimeEventId)
+        bouncer.reset(req)
+        res.status(200).json({message:'Query Evidence4CrimeEvent', evidenceForCrimeEvent:evidenceForCrimeEvent})
+    } catch (err) {
+        console.log('Query Evidence4CrimeEvent Error', err)
+        res.status(400).json({message:'Query Evidence4CrimeEvent Error', err:err})
+    }
+})
 
 module.exports = consu

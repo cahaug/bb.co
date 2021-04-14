@@ -67,6 +67,10 @@ module.exports = {
 
     dataForCrimeId(crimeEventId){
         return knex('данные').where('событиеИД', crimeEventId);
-    }
+    },
+
+    crimesForCriminal(criminalId){
+        return knex('события').where('преступникИД', criminalId);
+    },
 
 }
