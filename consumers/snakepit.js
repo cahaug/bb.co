@@ -8,10 +8,7 @@ const { addCriminal, addCrimeEvent, addDataEntry, addCommentOnCriminal, addComme
 
 // blackballing crims is truly thankless work,
 // as you can see it literally does not track attribution
-// iss true Bommunism B hope y'all like it
-// already know you won't 
-// XD LMAO :')
-// -cah/Link-In.Bio Ltd
+// iss true Bommunism B lmao
 
 
 consu.post('/addCriminal', hostNameGuard, restricted, bouncer.block, async (req, res) => {
@@ -187,26 +184,27 @@ consu.post('/addCommentCrimeEvent', hostNameGuard, restricted, bouncer.block, as
 })
 
 
-consu.post('/addCommentCrimeEvent', hostNameGuard, restricted, bouncer.block, async (req, res) => {
+consu.post('/addCommentEvidence', hostNameGuard, restricted, bouncer.block, async (req, res) => {
     // req.body.skazat3 strs incl: contentText. crimieEventId, consumerId, kirjoittanut
     try {
         let commentary = {
             kirjoittanut: req.decodedToken.имя,
             потребительИД: req.decodedToken.потребительИД,
-            событиеИД: parseInt(yescape(req.body.skazat3.событиеИД), 10),
+            данныеИД: parseInt(yescape(req.body.skazat3.данныеИД), 10),
             contentText: yescape(req.body.skazat3.contentText)
         }
-        const addedCommentCrimeEvent = await addCommentOnDataEntry(commentary)
+        const addedCommentEvidence = await addCommentOnDataEntry(commentary)
         bouncer.reset(req)
-        res.status(201).json({message:'Added Comment Crime Event Successfully', addedCommentCrimeEvent:addedCommentCrimeEvent})
+        res.status(201).json({message:'Added Comment Evidence Successfully', addedCommentEvidence:addedCommentEvidence})
     } catch (err) {
-        console.log('addComment Crime Event Error', err)
-        res.status(400).json({message:'Error Adding Comment Crime Event', err:err})
+        console.log('addComment Evidence Error', err)
+        res.status(400).json({message:'Error Adding Comment Evidence', err:err})
     }
 })
 
 
 consu.post('/searchCrimsLegalName', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.legalName only str
     try {
         let legalName = yescape(req.body.legalName)
         const searchedForCrimLegalName = await criminalSearchLegalName(legalName)
@@ -220,6 +218,7 @@ consu.post('/searchCrimsLegalName', hostNameGuard, bouncer.block, async (req, re
 
 
 consu.post('/searchCrimsLastFirst', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.firstName, req.body.lastName only strs
     try {
         let firstName = yescape(req.body.firstName)
         let lastName = yescape(req.body.lastName)
@@ -234,6 +233,7 @@ consu.post('/searchCrimsLastFirst', hostNameGuard, bouncer.block, async (req, re
 
 
 consu.post('/searchCrimsWithMid', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.firstName, req.body.middleName, req.body.lastName only strs
     try {
         let firstName = yescape(req.body.firstName)
         let middleName = yescape(req.body.middleName)
@@ -249,6 +249,7 @@ consu.post('/searchCrimsWithMid', hostNameGuard, bouncer.block, async (req, res)
 
 
 consu.post('/commentaryForCriminal', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.criminalId only str
     try {
         let criminalId = parseInt(yescape(req.body.criminalId), 10)
         const commentaryForCrim = await commentaryForCriminal(criminalId)
@@ -262,6 +263,7 @@ consu.post('/commentaryForCriminal', hostNameGuard, bouncer.block, async (req, r
 
 
 consu.post('/commentaryForCrimeEvent', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.crimeEventId only str
     try {
         let crimeEventId = parseInt(yescape(req.body.crimeEventId), 10)
         const commentaryForCrimeEv = await commentaryForCrimeEvent(crimeEventId)
@@ -275,6 +277,7 @@ consu.post('/commentaryForCrimeEvent', hostNameGuard, bouncer.block, async (req,
 
 
 consu.post('/commentaryForEvidence', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.evidenceId only str
     try {
         let dataEntryId = parseInt(yescape(req.body.evidenceId), 10)
         const commentaryForEvi = await commentaryForDataEntry(dataEntryId)
@@ -288,6 +291,7 @@ consu.post('/commentaryForEvidence', hostNameGuard, bouncer.block, async (req, r
 
 
 consu.post('/crimesForCrim', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.criminalId only str
     try {
         let criminalId = parseInt(yescape(req.body.criminalId), 10)
         const crimesForCrim = crimesForCriminal(criminalId)
@@ -301,6 +305,7 @@ consu.post('/crimesForCrim', hostNameGuard, bouncer.block, async (req, res) => {
 
 
 consu.post('/evidenceForCrimeEvent', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.crimeEventId only str
     try {
         let crimeEventId = parseInt(yescape(req.body.crimeEventId), 10)
         const evidenceForCrimeEvent = await dataForCrimeId(crimeEventId)
