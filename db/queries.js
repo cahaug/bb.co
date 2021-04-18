@@ -165,4 +165,8 @@ module.exports = {
         return knex('суждения3').where('суждения3ИД', evidenceCommentId).decrement({depravityScore: 1});
     },
 
+    getCrimForChain(criminalId){
+        return knex('преступники').where('преступникИД', criminalId);
+    }
+
 }
