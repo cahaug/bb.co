@@ -3,7 +3,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 require('dotenv').config();
 
-
+const ccbRouter = require('../blockchain/ccb.js')
+const snakeRouter = require('../consumers/snakepit.js')
 
 const server = express();
 
@@ -44,6 +45,9 @@ server.use(cors({
 server.use(express.json({ limit: "2mb" }));
 var hpp = require('hpp');
 server.use(hpp());
+
+server.use('/ccb/', ccbRouter)
+server.use('/zzz/', snakeRouter)
 
 server.get('/', (req, res) => {
     res.status(200).json({message:"Backend is Up"})
