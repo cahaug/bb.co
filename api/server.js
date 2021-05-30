@@ -3,7 +3,8 @@ const cors = require('cors');
 const helmet = require('helmet');
 require('dotenv').config();
 
-
+const ccbRouter = require('../blockchain/ccb.js')
+const snakeRouter = require('../consumers/snakepit.js')
 
 const server = express();
 
@@ -14,20 +15,20 @@ var allowedOrigins = [
                     //   'http://localhost:4242' FE testing via localhost
                      ];
 
-server.use(cors({
-  origin: function(origin, callback){
-    // allow requests with no origin 
-    // (like mobile apps or curl requests) -> why would we want that, the front end will only ever be talking to the backend
-    if(!origin) {console.log('CR-NoOrigin',origin, origin.length); return callback(null, true)};
-    if(allowedOrigins.indexOf(origin) === -1){
-      var msg = 'The CORS policy for this site does not ' +
-                'allow access from the specified Origin.';
-      return callback(new Error(msg), false);
-    }
-    console.log('CR-W-Origin',origin, origin.length);
-    return callback(null, true);
-  }
-}));
+// server.use(cors({
+//   origin: function(origin, callback){
+//     // allow requests with no origin 
+//     // (like mobile apps or curl requests) -> why would we want that, the front end will only ever be talking to the backend
+//     if(!origin) {console.log('CR-NoOrigin',origin, origin.length); return callback(null, true)};
+//     if(allowedOrigins.indexOf(origin) === -1){
+//       var msg = 'The CORS policy for this site does not ' +
+//                 'allow access from the specified Origin.';
+//       return callback(new Error(msg), false);
+//     }
+//     console.log('CR-W-Origin',origin, origin.length);
+//     return callback(null, true);
+//   }
+// }));
 server.use(cors({
     origin: function(origin, callback){
       // allow requests with no origin 
@@ -44,6 +45,9 @@ server.use(cors({
 server.use(express.json({ limit: "2mb" }));
 var hpp = require('hpp');
 server.use(hpp());
+
+server.use('/ccb/', ccbRouter)
+server.use('/zzz/', snakeRouter)
 
 server.get('/', (req, res) => {
     res.status(200).json({message:"Backend is Up"})

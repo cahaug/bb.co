@@ -3,18 +3,16 @@ var yescape = require('escape-html')
 var bouncer = require('express-bouncer')(500,900000)
 const restricted = require('../middleware/restricted.js')
 const hostNameGuard = require('../middleware/hostNameGuard.js')
-const { addCriminal, addCrimeEvent, addDataEntry, addCommentOnCriminal, addCommentOnCrimeEvent, addCommentOnDataEntry, criminalSearchLegalName, criminalSearchLastFirst, criminalSearchLastMiddleFirst, commentaryForCriminal, commentaryForCrimeEvent, commentaryForDataEntry, crimesForCriminal, dataForCrimeId } = require('../db/queries.js')
+const ipBan = require('../middleware/ipBan.js')
+const { addCriminal, addCrimeEvent, addDataEntry, addCommentOnCriminal, addCommentOnCrimeEvent, addCommentOnDataEntry, criminalSearchLegalName, criminalSearchLastFirst, criminalSearchLastMiddleFirst, commentaryForCriminal, commentaryForCrimeEvent, commentaryForDataEntry, crimesForCriminal, dataForCrimeId, incrementCriminalDepravity, decrementCriminalDepravity, incrementCriminalViews, incrementEventViews, incrementEvidenceViews, decrementDepravityScoreEvent, incrementDepravityScoreEvent, decrementJusticeScoreEvent, incrementJusticeScoreEvent, decrementEvidenceRelevance, incrementEvidenceRelevance, incrementCriminalCommentRelevancy, incrementCriminalCommentDepravity, decrementCriminalCommentRelevancy, decrementCriminalCommentDepravity, incrementCrimeEventCommentRelevancy, incrementCrimeEventCommentDepravity, decrementCrimeEventCommentRelevancy, decrementCrimeEventCommentDepravity, incrementEvidenceCommentRelevancy, incrementEvidenceCommentDepravity, decrementEvidenceCommentRelevancy, decrementEvidenceCommentDepravity } = require('../db/queries.js')
 
 
 // blackballing crims is truly thankless work,
 // as you can see it literally does not track attribution
-// iss true Bommunism B hope y'all like it
-// already know you won't 
-// XD LMAO :')
-// -cah/Link-In.Bio Ltd
+// iss true Bommunism B lmao
 
 
-consu.post('/addCriminal', hostNameGuard, restricted, bouncer.block, async (req, res) => {
+consu.post('/addCriminal', hostNameGuard, ipBan, restricted, bouncer.block, async (req, res) => {
     // req.body.ochko strs incl: legalName, probableLocation, estimatedAge, pictureURL, estimatedAge(int)
     //              highestLevelOfEdu, primaryEdu, secondaryEdu, primaryEmployment,
     //              secondaryEmployment, historicEmployment, trade, awardsAccolades,
@@ -69,7 +67,7 @@ consu.post('/addCriminal', hostNameGuard, restricted, bouncer.block, async (req,
 })
 
 
-consu.post('/addCrimeEvent', hostNameGuard, restricted, bouncer.block, async (req, res) => {
+consu.post('/addCrimeEvent', hostNameGuard, ipBan, restricted, bouncer.block, async (req, res) => {
     // req.body.rikös strs incl: complaintCategory, statusCode, firstOccurrenceDateTime, 
     //                   secondOccurrenceDateTime, thirdOccurrenceDateTime, lastOccurrenceDateTime
     //                  venueOfIncident, occurredAtLocation, occuredInCity, occuredInRegion,
@@ -126,7 +124,7 @@ consu.post('/addCrimeEvent', hostNameGuard, restricted, bouncer.block, async (re
 })
 
 
-consu.post('/addEvidence', hostNameGuard, restricted, bouncer.block, async (req, res) => {
+consu.post('/addEvidence', hostNameGuard, ipBan, restricted, bouncer.block, async (req, res) => {
     // req.body.todisteet strs incl: title, description, link, shortDescription, category, crimeEventId
     try {
         let evidence = {
@@ -141,7 +139,7 @@ consu.post('/addEvidence', hostNameGuard, restricted, bouncer.block, async (req,
         }
         const addedEvidence = await addDataEntry(evidence)
         bouncer.reset(req)
-        res.status(201).json({message:'Added Evidence Successfully', addedEvidence:addedEvidence})
+        res.status(201).json({message:'Added Evidence Successfully', addedEvidence: addedEvidence})
     } catch (err) {
         console.log('addEvidence Error', err)
         res.status(400).json({message:'Error Adding Evidence', err:err})
@@ -149,7 +147,7 @@ consu.post('/addEvidence', hostNameGuard, restricted, bouncer.block, async (req,
 })
 
 
-consu.post('/addCommentCriminal', hostNameGuard, restricted, bouncer.block, async (req, res) => {
+consu.post('/addCommentCriminal', hostNameGuard, ipBan, restricted, bouncer.block, async (req, res) => {
     // req.body.skazat1 strs incl: contentText. criminalId, consumerId, kirjoittanut
     try {
         let commentary = {
@@ -160,7 +158,7 @@ consu.post('/addCommentCriminal', hostNameGuard, restricted, bouncer.block, asyn
         }
         const addedCommentCriminal = await addCommentOnCriminal(commentary)
         bouncer.reset(req)
-        res.status(201).json({message:'Added Comment Criminal Successfully', addedCommentCriminal:addedCommentCriminal})
+        res.status(201).json({message:'Added Comment Criminal Successfully', addedCommentCriminal: addedCommentCriminal})
     } catch (err) {
         console.log('addComment Criminal Error', err)
         res.status(400).json({message:'Error Adding Comment Criminal', err:err})
@@ -168,7 +166,7 @@ consu.post('/addCommentCriminal', hostNameGuard, restricted, bouncer.block, asyn
 })
 
 
-consu.post('/addCommentCrimeEvent', hostNameGuard, restricted, bouncer.block, async (req, res) => {
+consu.post('/addCommentCrimeEvent', hostNameGuard, ipBan, restricted, bouncer.block, async (req, res) => {
     // req.body.skazat2 strs incl: contentText. crimieEventId, consumerId, kirjoittanut
     try {
         let commentary = {
@@ -179,7 +177,7 @@ consu.post('/addCommentCrimeEvent', hostNameGuard, restricted, bouncer.block, as
         }
         const addedCommentCrimeEvent = await addCommentOnCrimeEvent(commentary)
         bouncer.reset(req)
-        res.status(201).json({message:'Added Comment Crime Event Successfully', addedCommentCrimeEvent:addedCommentCrimeEvent})
+        res.status(201).json({message:'Added Comment Crime Event Successfully', addedCommentCrimeEvent: addedCommentCrimeEvent})
     } catch (err) {
         console.log('addComment Crime Event Error', err)
         res.status(400).json({message:'Error Adding Comment Crime Event', err:err})
@@ -187,26 +185,27 @@ consu.post('/addCommentCrimeEvent', hostNameGuard, restricted, bouncer.block, as
 })
 
 
-consu.post('/addCommentCrimeEvent', hostNameGuard, restricted, bouncer.block, async (req, res) => {
+consu.post('/addCommentEvidence', hostNameGuard, ipBan, restricted, bouncer.block, async (req, res) => {
     // req.body.skazat3 strs incl: contentText. crimieEventId, consumerId, kirjoittanut
     try {
         let commentary = {
             kirjoittanut: req.decodedToken.имя,
             потребительИД: req.decodedToken.потребительИД,
-            событиеИД: parseInt(yescape(req.body.skazat3.событиеИД), 10),
+            данныеИД: parseInt(yescape(req.body.skazat3.данныеИД), 10),
             contentText: yescape(req.body.skazat3.contentText)
         }
-        const addedCommentCrimeEvent = await addCommentOnDataEntry(commentary)
+        const addedCommentEvidence = await addCommentOnDataEntry(commentary)
         bouncer.reset(req)
-        res.status(201).json({message:'Added Comment Crime Event Successfully', addedCommentCrimeEvent:addedCommentCrimeEvent})
+        res.status(201).json({message:'Added Comment Evidence Successfully', addedCommentEvidence: addedCommentEvidence})
     } catch (err) {
-        console.log('addComment Crime Event Error', err)
-        res.status(400).json({message:'Error Adding Comment Crime Event', err:err})
+        console.log('addComment Evidence Error', err)
+        res.status(400).json({message:'Error Adding Comment Evidence', err:err})
     }
 })
 
 
 consu.post('/searchCrimsLegalName', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.legalName only str
     try {
         let legalName = yescape(req.body.legalName)
         const searchedForCrimLegalName = await criminalSearchLegalName(legalName)
@@ -220,6 +219,7 @@ consu.post('/searchCrimsLegalName', hostNameGuard, bouncer.block, async (req, re
 
 
 consu.post('/searchCrimsLastFirst', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.firstName, req.body.lastName only strs
     try {
         let firstName = yescape(req.body.firstName)
         let lastName = yescape(req.body.lastName)
@@ -234,6 +234,7 @@ consu.post('/searchCrimsLastFirst', hostNameGuard, bouncer.block, async (req, re
 
 
 consu.post('/searchCrimsWithMid', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.firstName, req.body.middleName, req.body.lastName only strs
     try {
         let firstName = yescape(req.body.firstName)
         let middleName = yescape(req.body.middleName)
@@ -249,11 +250,12 @@ consu.post('/searchCrimsWithMid', hostNameGuard, bouncer.block, async (req, res)
 
 
 consu.post('/commentaryForCriminal', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.criminalId only str
     try {
         let criminalId = parseInt(yescape(req.body.criminalId), 10)
         const commentaryForCrim = await commentaryForCriminal(criminalId)
         bouncer.reset(req)
-        res.status(200).json({message:'Commentary Criminal', commentaryForCrim:commentaryForCrim})
+        res.status(200).json({message:'Commentary Criminal', commentaryForCrim: commentaryForCrim})
     } catch (err) {
         console.log('Commentary Criminal Error', err)
         res.status(400).json({message:'Error Get Commentary Criminal', err:err})
@@ -262,11 +264,12 @@ consu.post('/commentaryForCriminal', hostNameGuard, bouncer.block, async (req, r
 
 
 consu.post('/commentaryForCrimeEvent', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.crimeEventId only str
     try {
         let crimeEventId = parseInt(yescape(req.body.crimeEventId), 10)
         const commentaryForCrimeEv = await commentaryForCrimeEvent(crimeEventId)
         bouncer.reset(req)
-        res.status(200).json({message:'Commentary CrimeEvent', commentaryForCrimeEv:commentaryForCrimeEv})
+        res.status(200).json({message:'Commentary CrimeEvent', commentaryForCrimeEv: commentaryForCrimeEv})
     } catch (err) {
         console.log('Commentary CrimeEvent Error', err)
         res.status(400).json({message:'Error Get Commentary CrimeEvent', err:err})
@@ -275,11 +278,12 @@ consu.post('/commentaryForCrimeEvent', hostNameGuard, bouncer.block, async (req,
 
 
 consu.post('/commentaryForEvidence', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.evidenceId only str
     try {
         let dataEntryId = parseInt(yescape(req.body.evidenceId), 10)
         const commentaryForEvi = await commentaryForDataEntry(dataEntryId)
         bouncer.reset(req)
-        res.status(200).json({message:'Commentary Evidence', commentaryForEvi:commentaryForEvi})
+        res.status(200).json({message:'Commentary Evidence', commentaryForEvi: commentaryForEvi})
     } catch (err) {
         console.log('Commentary Evidence Error', err)
         res.status(400).json({message:'Commentary Evidence Error', err:err})
@@ -288,11 +292,12 @@ consu.post('/commentaryForEvidence', hostNameGuard, bouncer.block, async (req, r
 
 
 consu.post('/crimesForCrim', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.criminalId only str
     try {
         let criminalId = parseInt(yescape(req.body.criminalId), 10)
         const crimesForCrim = crimesForCriminal(criminalId)
         bouncer.reset(req)
-        res.status(200).json({message:'Queried Crimes4Criminal', crimesForCrim:crimesForCrim})
+        res.status(200).json({message:'Queried Crimes4Criminal', crimesForCrim: crimesForCrim})
     } catch (err) {
         console.log('Query Crimes4Crim Error', err)
         res.status(400).json({message:'Query Crimes4Crim Error', err:err})
@@ -301,15 +306,250 @@ consu.post('/crimesForCrim', hostNameGuard, bouncer.block, async (req, res) => {
 
 
 consu.post('/evidenceForCrimeEvent', hostNameGuard, bouncer.block, async (req, res) => {
+    // req.body.crimeEventId only str
     try {
         let crimeEventId = parseInt(yescape(req.body.crimeEventId), 10)
         const evidenceForCrimeEvent = await dataForCrimeId(crimeEventId)
         bouncer.reset(req)
-        res.status(200).json({message:'Query Evidence4CrimeEvent', evidenceForCrimeEvent:evidenceForCrimeEvent})
+        res.status(200).json({message:'Query Evidence4CrimeEvent', evidenceForCrimeEvent: evidenceForCrimeEvent})
     } catch (err) {
         console.log('Query Evidence4CrimeEvent Error', err)
         res.status(400).json({message:'Query Evidence4CrimeEvent Error', err:err})
     }
 })
+
+
+consu.post('/guestbook', hostNameGuard, ipBan, bouncer.block, async (req, res) => {
+    try {
+        // req.body.ряд -> ['pres','sobi','dany'], req.body.ид -> ['x']Id
+        // split by req variety: criminal, event, evidence
+        if(req.body.ряд === 'pres'){
+            let criminalId = parseInt(yescape(req.body.ид), 10)
+            const incrementedCriminalViews = await incrementCriminalViews(criminalId)
+            bouncer.reset(req)
+            res.status(200).json({message:'Criminal View Recorded, Thank You', db: incrementedCriminalViews})
+        }
+        else if (req.body.ряд === 'sobi'){
+            let crimeEventId = parseInt(yescape(req.body.ид), 10)
+            const incrementedEventViews = await incrementEventViews(crimeEventId)
+            bouncer.reset(req)
+            res.status(200).json({message:'Event View Recorded, Thank You', db: incrementedEventViews})
+        }
+        else if (req.body.ряд === 'dany'){
+            let evidenceId = parseInt(yescape(req.body.ид), 10)
+            const incrementedEvidenceViews = await incrementEvidenceViews(evidenceId)
+            bouncer.reset(req)
+            res.status(200).json({message:'Evidence View Recorded, Thank You', db: incrementedEvidenceViews})
+        }
+        else {
+            res.status(400).json({message:'valid guestbook row required'})
+        }
+    } catch (err) {
+        console.log('guestbook error', err)
+        res.status(400).json({message:'guestbook error', err:err})
+    }
+})
+
+consu.post('/depravityIndexCriminal', hostNameGuard, ipBan, restricted, bouncer.block, async (req, res) => {
+    // req.body.criminalId only str, req.body.increment bool
+    try {
+        let criminalId = parseInt(yescape(req.body.criminalId), 10)
+        const isIncrement = !!req.body.increment
+        if(isIncrement === false){
+            const decrementedCriminalDepravity = await decrementCriminalDepravity(criminalId)
+            bouncer.reset(req)
+            res.status(200).json({message:`decremented depravityIndexCriminal for Criminal: ${criminalId}`, db: decrementedCriminalDepravity})
+        } else {
+            const incrementedCriminalDepravity = await incrementCriminalDepravity(criminalId) 
+            bouncer.reset(req)
+            res.status(200).json({message:`incremented depravityIndexCriminal for Criminal: ${criminalId}`, db: incrementedCriminalDepravity})
+        }
+    } catch (err) {
+        console.log('adjustDepravityIndex Criminal Error', err)
+        res.status(400).json({message:'adjustDepravityIndex Criminal Error', err:err})
+    }
+})
+
+consu.post('/depravityIndexEvent', hostNameGuard, ipBan, restricted, bouncer.block, async (req, res) => {
+    // req.body.criminalEventId only str, req.body.increment bool
+    try {
+        let criminalEventId = parseInt(yescape(req.body.criminalEventId), 10)
+        const isIncrement = !!req.body.increment
+        if(isIncrement === false){
+            const decrementedCriminalEventDepravity = await decrementDepravityScoreEvent(criminalEventId)
+            bouncer.reset(req)
+            res.status(200).json({message:`decremented depravityIndex for CriminalEventId: ${criminalEventId}`, db: decrementedCriminalEventDepravity})
+        } else {
+            const incrementedCriminalEventDepravity = await incrementDepravityScoreEvent(criminalEventId) 
+            bouncer.reset(req)
+            res.status(200).json({message:`incremented depravityIndex for CriminalEventId: ${criminalEventId}`, db: incrementedCriminalEventDepravity})
+        }
+    } catch (err) {
+        console.log('adjustDepravityIndex CriminalEvent Error', err)
+        res.status(400).json({message:'adjustDepravityIndex CriminalEvent Error', err:err})
+    }
+})
+
+
+consu.post('/justiceScoreEvent', hostNameGuard, ipBan, restricted, bouncer.block, async (req, res) => {
+    // req.body.criminalEventId only str, req.body.increment bool
+    try {
+        let criminalEventId = parseInt(yescape(req.body.criminalEventId), 10)
+        const isIncrement = !!req.body.increment
+        if(isIncrement === true){
+            const incrementJusticeScore = await incrementJusticeScoreEvent(criminalEventId)
+            bouncer.reset(req)
+            res.status(200).json({message:`incremented justiceScore for CriminalEventId: ${criminalEventId}`, db: incrementJusticeScore})
+        } else {
+            const decrementJusticeScore = await decrementJusticeScoreEvent(criminalEventId)
+            bouncer.reset(req)
+            res.status(200).json({message:`decremented justiceScore for CriminalEventId: ${criminalEventId}`, db: decrementJusticeScore})
+        }
+    } catch (err) {
+        console.log('adjustJusticeScore CriminalEvent Error', err)
+        res.status(400).json({message:'adjustJusticeScore CriminalEvent Error', err:err})
+    }
+})
+
+consu.post('/relevancyEvidence', hostNameGuard, ipBan, restricted, bouncer.block, async (req, res) => {
+    // req.body.evidenceId only str, req.body.increment bool
+    try {
+        let evidenceId = parseInt(yescape(req.body.evidenceId), 10)
+        const isIncrement = !!req.body.increment
+        if(isIncrement === false){
+            const decrementedEvidence = await decrementEvidenceRelevance(evidenceId)
+            bouncer.reset(req)
+            res.status(200).json({message:`decremented evidence relevance for evidenceId: ${evidenceId}`, db: decrementedEvidence})
+        } else {
+            const incrementedEvidence = await incrementEvidenceRelevance(evidenceId)
+            bouncer.reset(req)
+            res.status(200).json({message:`incremented evidence relevance for evidenceId: ${evidenceId}`, db: incrementedEvidence})
+        }
+    } catch (err) {
+        console.log('adjustRelevancy Evidence', err)
+        res.status(400).json({message:'adjustRelevance Evidence Error', err:err})
+    }
+})
+
+consu.post('/referee', hostNameGuard, ipBan, restricted, bouncer.block, async (req, res) => {
+    // req.body.ряд -> ['a':c1,'b':c2,'c':c3], req.body.ид -> ['x']Id, req.body.фю -> [я:incr,д:decr], req.body.ää -> [å:rel,ö:dep]
+    try {
+        if(req.body.ряд === 'a'){
+            let criminalCommentId = parseInt(yescape(req.body.ид), 10)
+            if(req.body.фю === 'я'){
+                if(req.body.ää === 'å'){
+                    const incrementedCCRel = await incrementCriminalCommentRelevancy(criminalCommentId)
+                    bouncer.reset(req)
+                    res.status(200).json({message:`incremented relevance comments criminal cid: ${criminalCommentId}`, db: incrementedCCRel})
+                }
+                else if(req.body.ää === 'ö'){
+                    const incrementedCCDep = await incrementCriminalCommentDepravity(criminalCommentId)
+                    bouncer.reset(req)
+                    res.status(200).json({message:`incremented depravity comments criminal cid: ${criminalCommentId}`, db: incrementedCCDep})
+                }
+                else {
+                    res.status(400).json({message:'valid ref rows required'})
+                }
+            }
+            else if(req.body.фю === 'д'){
+                if(req.body.ää === 'å'){
+                    const decrementedCCRel = await decrementCriminalCommentRelevancy(criminalCommentId)
+                    bouncer.reset(req)
+                    res.status(200).json({message:`decremented relevance comments criminal cid: ${criminalCommentId}`, db: decrementedCCRel})
+                }
+                else if(req.body.ää === 'ö'){
+                    const decrementedCCDep = await decrementCriminalCommentDepravity(criminalCommentId)
+                    bouncer.reset(req)
+                    res.status(200).json({message:`decremented depravity comments criminal cid: ${criminalCommentId}`, db: decrementedCCDep})
+                }
+                else {
+                    res.status(400).json({message:'valid ref rows required'})
+                }
+            }
+            else {
+                res.status(400).json({message:'valid ref rows required'})
+            }
+        }
+        else if(req.body.ряд === 'b'){
+            let crimeEventCommentId = parseInt(yescape(req.body.ид), 10)
+            if(req.body.фю === 'я'){
+                if(req.body.ää === 'å'){
+                    const incrementedCERel = await incrementCrimeEventCommentRelevancy(crimeEventCommentId)
+                    bouncer.reset(req)
+                    res.status(200).json({message:`incremented relevance comments event cid: ${crimeEventCommentId}`, db: incrementedCERel})
+                }
+                else if(req.body.ää === 'ö'){
+                    const incrementedCEDep = await incrementCrimeEventCommentDepravity(crimeEventCommentId)
+                    bouncer.reset(req)
+                    res.status(200).json({message:`incremented depravity comments event cid: ${crimeEventCommentId}`, db: incrementedCEDep})
+                }
+                else {
+                    res.status(400).json({message:'valid ref rows required'})
+                }
+            }
+            else if(req.body.фю === 'д'){
+                if(req.body.ää === 'å'){
+                    const decrementedCERel = await decrementCrimeEventCommentRelevancy(crimeEventCommentId)
+                    bouncer.reset(req)
+                    res.status(200).json({message:`decremented relevance comments event cid: ${crimeEventCommentId}`, db: decrementedCERel})
+                }
+                else if(req.body.ää === 'ö'){
+                    const decrementedCEDep = await decrementCrimeEventCommentDepravity(crimeEventCommentId)
+                    bouncer.reset(req)
+                    res.status(200).json({message:`decremented depravity comments event cid: ${crimeEventCommentId}`, db: decrementedCEDep})
+                }
+                else {
+                    res.status(400).json({message:'valid ref rows required'})
+                }
+            }
+            else {
+                res.status(400).json({message:'valid ref rows required'})
+            }
+        }
+        else if(req.body.ряд === 'c'){
+            let evidenceCommentId = parseInt(yescape(req.body.ид), 10)
+            if(req.body.фю === 'я'){
+                if(req.body.ää === 'å'){
+                    const incrementedERel = await incrementEvidenceCommentRelevancy(evidenceCommentId)
+                    bouncer.reset(req)
+                    res.status(200).json({message:`incremented relevance comment evidence cid: ${evidenceCommentId}`, db: incrementedERel})
+                }
+                else if(req.body.ää === 'ö'){
+                    const incrementedEDep = await incrementEvidenceCommentDepravity(evidenceCommentId)
+                    bouncer.reset(req)
+                    res.status(200).json({message:`incremented depravity comment evidence cid: ${evidenceCommentId}`, db: incrementedEDep})
+                }
+                else {
+                    res.status(400).json({message:'valid ref rows required'})
+                }
+            }
+            else if(req.body.фю === 'д'){
+                if(req.body.ää === 'å'){
+                    const decrementedERel = await decrementEvidenceCommentRelevancy(evidenceCommentId)
+                    bouncer.reset(req)
+                    res.status(200).json({message:`decremented relevance comment evidence cid: ${evidenceCommentId}`, db: decrementedERel})
+                }
+                else if(req.body.ää === 'ö'){
+                    const decrementedEDep = await decrementEvidenceCommentDepravity(evidenceCommentId)
+                    bouncer.reset(req)
+                    res.status(200).json({message:`decremented depravity comment evidence cid: ${evidenceCommentId}`, db: decrementedEDep})
+                }
+                else {
+                    res.status(400).json({message:'valid ref rows required'})
+                }
+            }
+            else {
+                res.status(400).json({message:'valid ref rows required'})
+            }
+        }
+        else {
+            res.status(400).json({message:'valid ref rows required'})
+        }
+    } catch (err) {
+        console.log('ref blew whistle', err)
+        res.status(400).json({message:'commentScoring adjustment Error', err:err})
+    }
+})
+
 
 module.exports = consu
