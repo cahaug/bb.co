@@ -13,6 +13,7 @@ authen.post('/loginConsumer', hostNameGuard, bouncer.block, async (req, res) => 
     try {
         const parol = req.body.parol
         let singleConsumerForLoginRet = singleConsumerForLogin(yescape(req.body.nimi))
+        console.log('single consumer ret', singleConsumerForLoginRet)
         if(singleConsumerForLoginRet.length > 0){
             if(singleConsumerForLoginRet[0] && bcrypt.compareSync(parol, singleConsumerForLoginRet[0].парольшиш)){
                 //valid user, give token
@@ -52,6 +53,7 @@ authen.post('/registerConsumer', hostNameGuard, bouncer.block, async (req, res) 
         const insertedConsumer = await addConsumer(consumer)
         console.log('insertedConsumer', insertedConsumer)
         let singleConsumerForLoginRet = singleConsumerForLogin(yescape(req.body.nimi))
+        console.log('consumer for login',singleConsumerForLoginRet)
         const token = generateTokenConsumer(singleConsumerForLoginRet[0])
         res.status(201).json({
             message:'account created',
