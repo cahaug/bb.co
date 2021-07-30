@@ -3,7 +3,8 @@ module.exports = (req, res, next) => {
     // see if its in the list
     const hostName = req.headers.origin
     let mySet = {
-        //undefined:true,
+        undefined:true,
+        'http://localhost':true,
 	    'https://blackball.co':true,
     }
     if(hostName in mySet){
