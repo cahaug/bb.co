@@ -3,7 +3,7 @@ const bcrypt = require('bcryptjs');
 const generateTokenConsumer = require('../middleware/generateTokenConsumer.js')
 const hostNameGuard = require('../middleware/hostNameGuard.js')
 var bouncer = require('express-bouncer')(500,900000)
-const { addConsumer, singleConsumerForLogin } = require('../database/queries.js');
+const { addConsumer, singleConsumerForLogin } = require('../db/queries.js');
 var yescape = require('escape-html')
 
 // All hatred stems from hatred itself.  Nip it in the bud.
