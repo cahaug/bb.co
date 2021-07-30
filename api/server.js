@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const ccbRouter = require('../blockchain/ccb.js')
 const snakeRouter = require('../consumers/snakepit.js')
+const authRouter = require('../auth/entication.js')
 
 const server = express();
 
@@ -48,6 +49,7 @@ server.use(hpp());
 
 server.use('/ccb/', ccbRouter)
 server.use('/zzz/', snakeRouter)
+server.use('/auth/', authRouter)
 
 server.get('/', (req, res) => {
     res.status(200).json({message:"Backend is Up"})
