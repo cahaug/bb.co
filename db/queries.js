@@ -14,7 +14,7 @@ module.exports = {
     },
 
     singleConsumerForLogin(username){
-        return knex('consumer');
+        return knex('consumer').where('username', username);
     },
 
     addCriminal(criminal){
