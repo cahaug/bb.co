@@ -6,8 +6,8 @@ function generateToken(user) {
     // verify signature -> a secret
     // console.log(user);
     const payload = {
-        имя: user.имя,
-        потребительИД: user.потребительИД,
+        username: user.username,
+        consumerId: user.consumerId,
     };
     
     const options = {
