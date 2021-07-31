@@ -20,15 +20,15 @@ authen.post('/loginConsumer', hostNameGuard, bouncer.block, async (req, res) => 
                 const token = generateTokenConsumer(singleConsumerForLoginRet[0])
                 res.status(201).json({
                     message:'login success',
-                    uid:singleConsumerForLoginRet[0].потребительИД,
+                    uid:singleConsumerForLoginRet[0].consumerId,
                     token:token,
-                    imya:singleConsumerForLoginRet[0].имя
+                    imya:singleConsumerForLoginRet[0].username
                 })
                 bouncer.reset(req)
-                console.log(`Consumer: ${singleConsumerForLoginRet[0].имя} : Login Request Complete`)
+                console.log(`Consumer: ${singleConsumerForLoginRet[0].username} : Login Request Complete`)
             } else {
                 //invalid password
-                console.log(`Consumer: ${singleConsumerForLoginRet[0].имя} : Invalid Password Attempted`)
+                console.log(`Consumer: ${singleConsumerForLoginRet[0].username} : Invalid Password Attempted`)
                 res.status(400).json({message:'incorrect password or username'})
             }
         } else {
@@ -62,7 +62,7 @@ authen.post('/registerConsumer', hostNameGuard, bouncer.block, async (req, res) 
             imya:singleConsumerForLoginRet[0].username
         })
         bouncer.reset(req)
-        console.log(`Consumer: ${singleConsumerForLoginRet[0].имя} : Registration Request Complete`)
+        console.log(`Consumer: ${singleConsumerForLoginRet[0].username} : Registration Request Complete`)
 
     } catch (err) {
         console.log('registerConsumerErr', err)
