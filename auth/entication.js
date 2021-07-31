@@ -15,7 +15,7 @@ authen.post('/loginConsumer', hostNameGuard, bouncer.block, async (req, res) => 
         let singleConsumerForLoginRet = singleConsumerForLogin(yescape(req.body.nimi))
         console.log('single consumer ret', singleConsumerForLoginRet)
         if(singleConsumerForLoginRet.length > 0){
-            if(singleConsumerForLoginRet[0] && bcrypt.compareSync(parol, singleConsumerForLoginRet[0].парольшиш)){
+            if(singleConsumerForLoginRet[0] && bcrypt.compareSync(parol, singleConsumerForLoginRet[0].passwordHash)){
                 //valid user, give token
                 const token = generateTokenConsumer(singleConsumerForLoginRet[0])
                 res.status(201).json({
@@ -45,10 +45,10 @@ authen.post('/loginConsumer', hostNameGuard, bouncer.block, async (req, res) => 
 authen.post('/registerConsumer', hostNameGuard, bouncer.block, async (req, res) => {
     // takes in body of {email: '', nimi:'', iso2digCC: '', parol:'' }
     try {
-        let consumer = {емейл:yescape(req.body.email), имя:yescape(req.body.nimi), странаИСО2:yescape(req.body.iso2digCC)}
+        let consumer = {email:yescape(req.body.email), username:yescape(req.body.nimi), countryCode:yescape(req.body.iso2digCC)}
         console.log('incoming consumer registration', consumer)
-        const парольшиш = bcrypt.hashSync(req.body.parol, 8)
-        consumer = {...consumer, парольшиш:парольшиш}
+        const passwordHash = bcrypt.hashSync(req.body.parol, 8)
+        consumer = {...consumer, passwordHash:passwordHash}
         console.log('na shish', consumer)
         const insertedConsumer = await addConsumer(consumer)
         console.log('insertedConsumer', insertedConsumer)
@@ -57,9 +57,9 @@ authen.post('/registerConsumer', hostNameGuard, bouncer.block, async (req, res) 
         const token = generateTokenConsumer(singleConsumerForLoginRet[0])
         res.status(201).json({
             message:'account created',
-            uid:singleConsumerForLoginRet[0].потребительИД,
+            uid:singleConsumerForLoginRet[0].consumerId,
             token:token,
-            imya:singleConsumerForLoginRet[0].имя
+            imya:singleConsumerForLoginRet[0].username
         })
         bouncer.reset(req)
         console.log(`Consumer: ${singleConsumerForLoginRet[0].имя} : Registration Request Complete`)
