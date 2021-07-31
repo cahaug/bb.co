@@ -2,172 +2,171 @@ const knex = require('./knex')
 
 module.exports = {
     getAllCriminals(){
-        return knex('преступники');
+        return knex('criminals');
     },
 
     getAllCrimes(){
-        return knex('события');
+        return knex('crimes');
     },
 
     addConsumer(consumer){
-        return knex('потребитель').insert(consumer);
+        return knex('consumer').insert(consumer);
     },
 
     singleConsumerForLogin(username){
-        // return knex('потребитель').where('имя', username);
-        return knex('потребитель');
+        return knex('consumer').where('username', username);
     },
 
     addCriminal(criminal){
-        return knex('преступники').insert(criminal);
+        return knex('criminals').insert(criminal);
     },
 
     addCrimeEvent(crimeEvent){
-        return knex('события').insert(crimeEvent);
+        return knex('crimes').insert(crimeEvent);
     },
 
     addDataEntry(evidence){
-        return knex('данные').insert(evidence);
+        return knex('data').insert(evidence);
     },
 
     addCommentOnCriminal(commentary){
-        return knex('суждения1').insert(commentary);
+        return knex('comments1').insert(commentary);
     },
 
     addCommentOnCrimeEvent(commentary){
-        return knex('суждения2').insert(commentary);
+        return knex('comments2').insert(commentary);
     },
 
     addCommentOnDataEntry(commentary){
-        return knex('суждения3').insert(commentary);
+        return knex('comments3').insert(commentary);
     },
 
     commentaryForCriminal(criminalId){
-        return knex('суждения1').where('преступникИД', criminalId);
+        return knex('comments1').where('criminalId', criminalId);
     },
     
     commentaryForCrimeEvent(crimeEventId){
-        return knex('суждения2').where('потребительИД', crimeEventId);
+        return knex('comments2').where('crimeId', crimeEventId);
     },
 
     commentaryForDataEntry(dataEntryId){
-        return knex('суждения3').where('данныеИД', dataEntryId);
+        return knex('comments3').where('dataId', dataEntryId);
     },
 
     criminalSearchLegalName(legalName){
-        return knex('преступники').where('legalName', legalName);
+        return knex('criminals').where('legalName', legalName);
     },
 
     criminalSearchLastFirst(firstName, lastName){
-        return knex('преступники').where('lastName', lastName).where('firstName', firstName);
+        return knex('criminals').where('lastName', lastName).where('firstName', firstName);
     },
 
     criminalSearchLastMiddleFirst(firstName, middleName, lastName){
-        return knex('преступники').where('lastName', lastName).where('firstName', firstName).where('middleName', middleName);
+        return knex('criminals').where('lastName', lastName).where('firstName', firstName).where('middleName', middleName);
     },
 
     dataForCrimeId(crimeEventId){
-        return knex('данные').where('событиеИД', crimeEventId);
+        return knex('data').where('crimeId', crimeEventId);
     },
 
     crimesForCriminal(criminalId){
-        return knex('события').where('преступникИД', criminalId);
+        return knex('crimes').where('criminalId', criminalId);
     },
 
     incrementCriminalViews(criminalId){
-        return knex('преступники').where('преступникИД', criminalId).increment({profileViews: 1});
+        return knex('criminals').where('criminalId', criminalId).increment({profileViews: 1});
     },
 
     incrementEventViews(crimeEventId){
-        return knex('события').where('событиеИД', crimeEventId).increment({eventViews: 1});
+        return knex('crimes').where('crimeId', crimeEventId).increment({eventViews: 1});
     },
     
     incrementEvidenceViews(evidenceId){
-        return knex('данные').where('данныеИД', evidenceId).increment({itemViews: 1});
+        return knex('data').where('dataId', evidenceId).increment({itemViews: 1});
     },
 
     incrementCriminalDepravity(criminalId){
-        return knex('преступники').where('преступникИД', criminalId).increment({depravityScore: 1});
+        return knex('criminals').where('criminalId', criminalId).increment({depravityScore: 1});
     },
 
     incrementDepravityScoreEvent(crimeEventId){
-        return knex('события').where('событиеИД', crimeEventId).increment({depravityScore: 1});
+        return knex('crimes').where('crimeId', crimeEventId).increment({depravityScore: 1});
     },
     
     incrementJusticeScoreEvent(crimeEventId){
-        return knex('события').where('событиеИД', crimeEventId).increment({justiceScore: 1});
+        return knex('crimes').where('crimeId', crimeEventId).increment({justiceScore: 1});
     },
     
     incrementEvidenceRelevance(evidenceId){
-        return knex('данные').where('данныеИД', evidenceId).increment({relevancyScore: 1});
+        return knex('data').where('dataId', evidenceId).increment({relevancyScore: 1});
     },
 
     incrementCriminalCommentRelevancy(criminalCommentId){
-        return knex('суждения1').where('суждения1ИД', criminalCommentId).increment({relevancyScore: 1});
+        return knex('comments1').where('comments1Id', criminalCommentId).increment({relevancyScore: 1});
     },
 
     incrementCriminalCommentDepravity(criminalCommentId){
-        return knex('суждения1').where('суждения1ИД', criminalCommentId).increment({depravityScore: 1});
+        return knex('comments1').where('comments1Id', criminalCommentId).increment({depravityScore: 1});
     },
 
     incrementCrimeEventCommentRelevancy(crimeEventCommentId){
-        return knex('суждения2').where('суждения2ИД', crimeEventCommentId).increment({relevancyScore: 1});
+        return knex('comments2').where('comments2Id', crimeEventCommentId).increment({relevancyScore: 1});
     },
 
     incrementCrimeEventCommentDepravity(crimeEventCommentId){
-        return knex('суждения2').where('суждения2ИД', crimeEventCommentId).increment({depravityScore: 1});
+        return knex('comments2').where('comments2Id', crimeEventCommentId).increment({depravityScore: 1});
     },
 
     incrementEvidenceCommentRelevancy(evidenceCommentId){
-        return knex('суждения3').where('суждения3ИД', evidenceCommentId).increment({relevancyScore: 1});
+        return knex('comments3').where('comments3Id', evidenceCommentId).increment({relevancyScore: 1});
     },
 
     incrementEvidenceCommentDepravity(evidenceCommentId){
-        return knex('суждения3').where('суждения3ИД', evidenceCommentId).increment({depravityScore: 1});
+        return knex('comments3').where('comments3Id', evidenceCommentId).increment({depravityScore: 1});
     },
 
     decrementCriminalDepravity(criminalId){
-        return knex('преступники').where('преступникИД', criminalId).decrement({depravityScore: 1});
+        return knex('criminals').where('criminalId', criminalId).decrement({depravityScore: 1});
     },
 
     decrementJusticeScoreEvent(crimeEventId){
-        return knex('события').where('событиеИД', crimeEventId).decrement({justiceScore: 1});
+        return knex('crimes').where('crimeId', crimeEventId).decrement({justiceScore: 1});
     },
 
     decrementDepravityScoreEvent(crimeEventId){
-        return knex('события').where('событиеИД', crimeEventId).decrement({depravityScore: 1});
+        return knex('crimes').where('crimeId', crimeEventId).decrement({depravityScore: 1});
     },
 
     decrementEvidenceRelevance(evidenceId){
-        return knex('данные').where('данныеИД', evidenceId).decrement({relevancyScore: 1});
+        return knex('data').where('dataId', evidenceId).decrement({relevancyScore: 1});
     },
 
     decrementCriminalCommentRelevancy(criminalCommentId){
-        return knex('суждения1').where('суждения1ИД', criminalCommentId).decrement({relevancyScore: 1});
+        return knex('comments1').where('comments1Id', criminalCommentId).decrement({relevancyScore: 1});
     },
 
     decrementCriminalCommentDepravity(criminalCommentId){
-        return knex('суждения1').where('суждения1ИД', criminalCommentId).decrement({depravityScore: 1});
+        return knex('comments1').where('comments1Id', criminalCommentId).decrement({depravityScore: 1});
     },
 
     decrementCrimeEventCommentRelevancy(crimeEventCommentId){
-        return knex('суждения2').where('суждения2ИД', crimeEventCommentId).decrement({relevancyScore: 1});
+        return knex('comments2').where('comments2Id', crimeEventCommentId).decrement({relevancyScore: 1});
     },
 
     decrementCrimeEventCommentDepravity(crimeEventCommentId){
-        return knex('суждения2').where('суждения2ИД', crimeEventCommentId).decrement({depravityScore: 1});
+        return knex('comments2').where('comments2Id', crimeEventCommentId).decrement({depravityScore: 1});
     },
 
     decrementEvidenceCommentRelevancy(evidenceCommentId){
-        return knex('суждения3').where('суждения3ИД', evidenceCommentId).decrement({relevancyScore: 1});
+        return knex('comments3').where('comments3Id', evidenceCommentId).decrement({relevancyScore: 1});
     },
 
     decrementEvidenceCommentDepravity(evidenceCommentId){
-        return knex('суждения3').where('суждения3ИД', evidenceCommentId).decrement({depravityScore: 1});
+        return knex('comments3').where('comments3Id', evidenceCommentId).decrement({depravityScore: 1});
     },
 
     getCrimForChain(criminalId){
-        return knex('преступники').where('преступникИД', criminalId);
+        return knex('criminals').where('criminalId', criminalId);
     }
 
 }

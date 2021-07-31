@@ -1,24 +1,24 @@
 
 exports.up = function(knex, Promise) {
     return knex.schema
-    .createTable('пользователь', user => {
-        user.increments('пользовательИД');
-        user.string('емейл',255).defaultsTo(null);
-        user.string('парольшиш');
-        user.string('имя', 255).notNullable().unique();
-        user.timestamp('создано_на', { useTz: true }).defaultTo(knex.fn.now());
+    .createTable('administrator', user => {
+        user.increments('userId');
+        user.string('email',255).defaultsTo(null);
+        user.string('passwordHash');
+        user.string('username', 255).notNullable().unique();
+        user.timestamp('created_at', { useTz: true }).defaultTo(knex.fn.now());
     })
-    .createTable('потребитель', user => {
-        user.increments('потребительИД');
-        user.string('емейл',255).defaultsTo(null);
-        user.string('парольшиш');
-        user.string('имя', 255).notNullable().unique();
-        user.string('странаИСО2', 2).notNullable()
-        user.timestamp('создано_на', { useTz: true }).defaultTo(knex.fn.now());
+    .createTable('consumer', user => {
+        user.increments('consumerId');
+        user.string('email',255).defaultsTo(null);
+        user.string('passwordHash');
+        user.string('username', 255).notNullable().unique();
+        user.string('countryCode', 2).notNullable()
+        user.timestamp('created_at', { useTz: true }).defaultTo(knex.fn.now());
     })
-    .createTable('преступники', record => {
-        record.increments('преступникИД');
-        record.timestamp('создано_на', { useTz: true }).defaultTo(knex.fn.now());
+    .createTable('criminals', record => {
+        record.increments('criminalId');
+        record.timestamp('created_at', { useTz: true }).defaultTo(knex.fn.now());
         record.string('legalName', 255).notNullable();
         record.string('probableLocation',255).defaultTo(null);
         record.integer('estimatedAge',3).defaultTo(null);
@@ -52,14 +52,14 @@ exports.up = function(knex, Promise) {
         record.bigInteger('depravityScore').defaultTo(0);
         record.string('offenderComment', 8000).defaultTo(null);
     })
-    .createTable('события', record => {
-        record.increments('событиеИД');
-        record.timestamp('создано_на', { useTz: true }).defaultTo(knex.fn.now());
-        record.integer('преступникИД')
+    .createTable('crimes', record => {
+        record.increments('crimeId');
+        record.timestamp('created_at', { useTz: true }).defaultTo(knex.fn.now());
+        record.integer('criminalId')
             .unsigned()
             .notNullable()
-            .references('преступникИД')
-            .inTable('преступники')
+            .references('criminalId')
+            .inTable('criminals')
             .onDelete('CASCADE')
             .onUpdate('CASCADE');
         record.boolean('isolatedEvent').defaultTo(true);
@@ -99,16 +99,16 @@ exports.up = function(knex, Promise) {
         record.string('legalResolutionCriminal',10000).defaultTo(null);
         record.string('legalResolutionCivil', 10000).defaultTo(null);
     })
-    .createTable('данные', record => {
-        record.increments('данныеИД');
-        record.integer('событиеИД')
+    .createTable('data', record => {
+        record.increments('dataId');
+        record.integer('crimeId')
             .unsigned()
             .notNullable()
-            .references('событиеИД')
-            .inTable('события')
+            .references('crimeId')
+            .inTable('crimes')
             .onDelete('CASCADE')
             .onUpdate('CASCADE');
-        record.timestamp('создано_на', { useTz: true }).defaultTo(knex.fn.now());
+        record.timestamp('created_at', { useTz: true }).defaultTo(knex.fn.now());
         record.bigInteger('itemViews').defaultTo(0);
         record.bigInteger('relevancyScore').defaultTo(0);
         record.string('title', 255).defaultTo(null);
@@ -117,65 +117,65 @@ exports.up = function(knex, Promise) {
         record.string('shortDescription',400).defaultTo(null);
         record.string('category', 128).defaultTo(null);
     })
-    .createTable('суждения1', record => {
-        record.increments('суждения1ИД');
-        record.integer('потребительИД')
+    .createTable('comments1', record => {
+        record.increments('comments1Id');
+        record.integer('consumerId')
             .unsigned()
             .notNullable()
-            .references('потребительИД')
-            .inTable('потребитель')
+            .references('consumerId')
+            .inTable('consumer')
             .onDelete('CASCADE')
             .onUpdate('CASCADE');
-        record.integer('преступникИД')
+        record.integer('criminalId')
             .unsigned()
             .notNullable()
-            .references('преступникИД')
-            .inTable('преступники')
+            .references('criminalId')
+            .inTable('criminals')
             .onDelete('CASCADE')
             .onUpdate('CASCADE');
-        record.timestamp('создано_на', { useTz: true }).defaultTo(knex.fn.now());
+        record.timestamp('created_at', { useTz: true }).defaultTo(knex.fn.now());
         record.bigInteger('relevancyScore').defaultTo(0);
         record.bigInteger('depravityScore').defaultTo(0);
         record.string('contentText', 10000).defaultTo(null);
     })
-    .createTable('суждения2', record => {
-        record.increments('суждения2ИД');
-        record.integer('потребительИД')
+    .createTable('comments2', record => {
+        record.increments('comments2Id');
+        record.integer('consumerId')
             .unsigned()
             .notNullable()
-            .references('потребительИД')
-            .inTable('потребитель')
+            .references('consumerId')
+            .inTable('consumer')
             .onDelete('CASCADE')
             .onUpdate('CASCADE');
-        record.integer('событиеИД')
+        record.integer('crimeId')
             .unsigned()
             .notNullable()
-            .references('событиеИД')
-            .inTable('события')
+            .references('crimeId')
+            .inTable('crimes')
             .onDelete('CASCADE')
             .onUpdate('CASCADE');
-        record.timestamp('создано_на', { useTz: true }).defaultTo(knex.fn.now());
+        record.timestamp('created_at', { useTz: true }).defaultTo(knex.fn.now());
         record.bigInteger('relevancyScore').defaultTo(0);
         record.bigInteger('depravityScore').defaultTo(0);
         record.string('contentText', 10000).defaultTo(null);
     })
-    .createTable('суждения3', record => {
-        record.increments('суждения3ИД');
-        record.integer('потребительИД')
+    .createTable('comments3', record => {
+        record.increments('comments3Id');
+        record.integer('consumerId')
             .unsigned()
             .notNullable()
-            .references('потребительИД')
-            .inTable('потребитель')
+            .references('consumerId')
+            .inTable('consumer')
             .onDelete('CASCADE')
             .onUpdate('CASCADE');
-        record.integer('данныеИД')
+        record.integer('dataId')
             .unsigned()
             .notNullable()
-            .references('данныеИД')
-            .inTable('данные')
+            .references('dataId')
+            .inTable('data')
             .onDelete('CASCADE')
             .onUpdate('CASCADE');
-        record.timestamp('создано_на', { useTz: true }).defaultTo(knex.fn.now());
+        record.timestamp('created_at', { useTz: true }).defaultTo(knex.fn.now());
         record.bigInteger('relevancyScore').defaultTo(0);
         record.bigInteger('depravityScore').defaultTo(0);
         record.string('contentText', 10000).defaultTo(null);
@@ -184,12 +184,12 @@ exports.up = function(knex, Promise) {
 
 exports.down = function(knex, Promise) {
     return knex.schema
-        .dropTableIfExists('суждения3')
-        .dropTableIfExists('суждения2')
-        .dropTableIfExists('суждения1')
-        .dropTableIfExists('данные')
-        .dropTableIfExists('события')
-        .dropTableIfExists('преступники')
-        .dropTableIfExists('потребитель')
-        .dropTableIfExists('пользователь');
+        .dropTableIfExists('comments3')
+        .dropTableIfExists('comments2')
+        .dropTableIfExists('comments1')
+        .dropTableIfExists('data')
+        .dropTableIfExists('crimes')
+        .dropTableIfExists('criminals')
+        .dropTableIfExists('consumer')
+        .dropTableIfExists('administrator');
 };
