@@ -1,7 +1,7 @@
 
 exports.up = function(knex, Promise) {
     return knex.schema
-    .table('преступники', record => {
+    .table('criminals', record => {
         record.string('firstName', 100).defaultTo(null);
         record.string('middleName', 100).defaultTo(null);
         record.string('lastName',100).defaultTo(null);

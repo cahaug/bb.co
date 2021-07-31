@@ -1,13 +1,13 @@
 
 exports.up = function(knex, Promise) {
     return knex.schema
-    .table('суждения1', record => {
+    .table('comments1', record => {
         record.string('kirjoittanut', 255);
     })
-    .table('суждения2', record => {
+    .table('comments2', record => {
         record.string('kirjoittanut', 255);
     })
-    .table('суждения3', record => {
+    .table('comments3', record => {
         record.string('kirjoittanut', 255);
     });
 };
