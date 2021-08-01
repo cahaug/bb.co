@@ -294,7 +294,7 @@ consu.post('/crimesForCrim', hostNameGuard, bouncer.block, async (req, res) => {
     // req.body.criminalId only str
     try {
         let criminalId = parseInt(yescape(req.body.criminalId), 10)
-        const crimesForCrim = crimesForCriminal(criminalId)
+        const crimesForCrim = await crimesForCriminal(criminalId)
         bouncer.reset(req)
         res.status(200).json({message:'Queried Crimes4Criminal', crimesForCrim: crimesForCrim})
     } catch (err) {
