@@ -152,7 +152,7 @@ consu.post('/addCommentCriminal', hostNameGuard, restricted, bouncer.block, asyn
         let commentary = {
             kirjoittanut: req.decodedToken.username,
             consumerId: req.decodedToken.consumerId,
-            преступникИД: parseInt(yescape(req.body.skazat1.преступникИД), 10),
+            criminalId: parseInt(yescape(req.body.skazat1.criminalId), 10),
             contentText: yescape(req.body.skazat1.contentText)
         }
         const addedCommentCriminal = await addCommentOnCriminal(commentary)
