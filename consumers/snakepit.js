@@ -78,6 +78,7 @@ consu.post('/addCrimeEvent', hostNameGuard, restricted, bouncer.block, async (re
     try {
         let crimeEvent = {
             // strs
+            criminalId:parseInt(yescape(req.body.rikös.criminalId),10),
             complaintCategory: yescape(req.body.rikös.complaintCategory),
             statusCode: yescape(req.body.rikös.statusCode),
             firstOccurrenceDateTime: yescape(req.body.rikös.firstOccurrenceDateTime),
