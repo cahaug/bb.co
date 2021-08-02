@@ -13,7 +13,7 @@ server.use(helmet());
 
 var allowedOrigins = [
                       'https://blackball.co',
-                    //   'http://localhost:4242' FE testing via localhost
+                      'http://localhost:3000' // FE testing via localhost
                      ];
 
 // server.use(cors({
